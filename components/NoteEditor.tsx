@@ -11,14 +11,14 @@ export class NoteProps {
   }
   
 export default function NoteEditor({ note, onSubmit }: NoteProps) {
-    // can I use this?
+    // TODO: Just do state on editable props (title, etc.)
     const [editorNote, setEditorNote] = React.useState<Note>(note);
 
     const [facing, setFacing] = React.useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
 
     function updateNote(text: string) {
-        const updatedNote = { ...editorNote, title: text };
+        const updatedNote = { ...editorNote, id: editorNote.id, title: text };
         setEditorNote(updatedNote);
     }
 

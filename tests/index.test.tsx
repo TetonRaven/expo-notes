@@ -1,7 +1,9 @@
-// import HomeScreen from "./index";
+import HomeScreen from "../app/(tabs)/index";
 
 it('should do it', () => {
     //const homeScreen = new HomeScreen();
     //expect(homeScreen).toBeDefined();
-    expect(1).toBe(1);
+
+    // var hs = HomeScreen()
+    // hs.showNewNote();
 });

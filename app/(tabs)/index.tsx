@@ -1,7 +1,8 @@
 import React from 'react';
-import { Image, StyleSheet, Platform, FlatList, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, FlatList, Text, View, Button } from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNote, updateNote, showNewNote, editNote } from '../../store/notesSlice';
 
 import { ThemedText } from '@/components/ThemedText';
 
@@ -9,93 +10,68 @@ import { Note } from '@/models/note';
 import NoteEditor, { NoteProps } from '@/components/NoteEditor';
 
 export default function HomeScreen() {  
-  const [notes, setNotes] = React.useState<Note[]>([ { ...new Note(), title: 'Uno' }, { ...new Note(), title: 'Dos' }, { ...new Note(), title: 'Tres' }]);  
+  const notes: Note[] = useSelector((state: any) => state.notes.notes);
+  const showNew: boolean = useSelector((state: any) => state.notes.showNew);
+  const newNote: Note = useSelector((state: any) => state.notes.newNote);
+  const editingNote: Note = useSelector((state: any) => state.notes.editingNote);
+  const editingNoteIndex: number = useSelector((state: any) => state.notes.editingNoteIndex);
 
-  const [editingNote, setEditingNote] = React.useState<Note>(new Note());
-  const [editingNoteIndex, setEditingNoteIndex] = React.useState<number>(-1);
+  const dispatch = useDispatch();
 
-  const [newNote, setNewNote] = React.useState<Note>(new Note());
-  const [showNew, setShowNew] = React.useState(false);
-
-  function showNewNote()  {    
-    setNewNote(new Note());
-    setShowNew(true);    
+  function handlAddNotePress()  {
+    dispatch(showNewNote());
   }
   
   function saveNewNote(note: Note) {
-    setShowNew(false);
-
-    const modifiedNotes = notes.slice();
-    modifiedNotes.push(note);
-    setNotes(modifiedNotes);
+    dispatch(addNote(note));
   }
 
-  function editNote(note: Note) {
-    setEditingNoteIndex(notes.indexOf(note));
-    setEditingNote({ ...note });
+  function handleEditNote(note: Note) {
+    dispatch(editNote(note));    
   }
 
   function saveNote(note: Note) {
-    if (editingNoteIndex < 0) {
-      return;
-    }
-
-    const modifiedNotes = notes.slice();
-    modifiedNotes[editingNoteIndex] = note;
-    setNotes(modifiedNotes);    
-    setEditingNoteIndex(-1);
+    dispatch(updateNote(note));
   }    
 
   // todo: add photo, redux, local persistence, api
 
   return (    
 
-    // <SafeAreaProvider>
-    //   <SafeAreaView style={styles.container}>
-    //     <ThemedText type="title">Notes</ThemedText>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <ThemedText type="title">Notes</ThemedText>
 
-    //     <Button title="Add Note" onPress={() => showNewNote()} />
+        <Button title="Add Note" onPress={() => handlAddNotePress()} />
 
-    //     {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
+        {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
 
-    //     <FlatList 
-    //       data={notes} 
-    //       renderItem={({item, index}) => 
-    //         index === editingNoteIndex
-    //         ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
-    //         : <Text onPress={() => editNote(item)}>{item.title}</Text>} 
-    //     />  
+        <FlatList 
+          data={notes} 
+          renderItem={({item, index}) => 
+            index === editingNoteIndex
+            ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
+            : <Text onPress={() => handleEditNote(item)}>{item.title}</Text>} 
+        />
 
-        
-            
-    //         {/* <ThemedView style={styles.stepContainer}>
-    //           <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-    //           <ThemedText>
-    //             When you're ready, run{' '}
-    //             <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-    //             <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-    //             <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-    //             <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-    //           </ThemedText>
-    //         </ThemedView> */}
-    //       </SafeAreaView>
-    // </SafeAreaProvider>  
+      </SafeAreaView>
+    </SafeAreaProvider>  
     
-    <View>
-      <ThemedText type="title">Notes</ThemedText>
+    // <View>
+    //   <ThemedText type="title">Notes</ThemedText>
 
-      <Button title="Add Note" onPress={() => showNewNote()} />
+    //   <Button title="Add Note" onPress={() => showNewNote()} />
 
-      {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
+    //   {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
 
-      <FlatList 
-        data={notes} 
-        renderItem={({item, index}) => 
-          index === editingNoteIndex
-          ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
-          : <Text onPress={() => editNote(item)}>{item.title}</Text>} 
-      /> 
-    </View>
+    //   <FlatList 
+    //     data={notes} 
+    //     renderItem={({item, index}) => 
+    //       index === editingNoteIndex
+    //       ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
+    //       : <Text onPress={() => editNote(item)}>{item.title}</Text>} 
+    //   /> 
+    // </View>
   );
 }
 
