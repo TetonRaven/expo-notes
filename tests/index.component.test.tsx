@@ -62,6 +62,7 @@ describe('HomeScreen', () => {
 
       // TODO: What about api calls? Probably don't want to do that here, but the RN testing seems to be geared that way. Need it somewhere, though.
 
+      // this should break
       expect(false).toBe(true);
     });
   });
