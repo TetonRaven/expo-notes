@@ -14,8 +14,8 @@ export default function NoteEditor({ note, onSubmit }: NoteProps) {
     // TODO: Just do state on editable props (title, etc.)
     const [editorNote, setEditorNote] = React.useState<Note>(note);
 
-    const [facing, setFacing] = React.useState<CameraType>('back');
-    const [permission, requestPermission] = useCameraPermissions();
+    // const [facing, setFacing] = React.useState<CameraType>('back');
+    // const [permission, requestPermission] = useCameraPermissions(); // THIS causes parent component/screen tests to blow up. Lame.
 
     function updateNote(text: string) {
         const updatedNote = { ...editorNote, id: editorNote.id, title: text };

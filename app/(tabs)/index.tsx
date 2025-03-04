@@ -37,41 +37,22 @@ export default function HomeScreen() {
   // todo: add photo, redux, local persistence, api
 
   return (    
+    <SafeAreaView style={styles.container}>
+      <ThemedText type="title">Notes</ThemedText>
 
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <ThemedText type="title">Notes</ThemedText>
+      <Button title="Add Note" onPress={() => handlAddNotePress()} />
 
-        <Button title="Add Note" onPress={() => handlAddNotePress()} />
+      {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
 
-        {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
+      <FlatList 
+        data={notes} 
+        renderItem={({item, index}) => 
+          index === editingNoteIndex
+          ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
+          : <Text onPress={() => handleEditNote(item)}>{item.title}</Text>} 
+      />
 
-        <FlatList 
-          data={notes} 
-          renderItem={({item, index}) => 
-            index === editingNoteIndex
-            ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
-            : <Text onPress={() => handleEditNote(item)}>{item.title}</Text>} 
-        />
-
-      </SafeAreaView>
-    </SafeAreaProvider>  
-    
-    // <View>
-    //   <ThemedText type="title">Notes</ThemedText>
-
-    //   <Button title="Add Note" onPress={() => showNewNote()} />
-
-    //   {showNew && (<NoteEditor note={newNote} onSubmit={saveNewNote} />)}
-
-    //   <FlatList 
-    //     data={notes} 
-    //     renderItem={({item, index}) => 
-    //       index === editingNoteIndex
-    //       ? <NoteEditor key={editingNoteIndex} note={editingNote} onSubmit={saveNote} />
-    //       : <Text onPress={() => editNote(item)}>{item.title}</Text>} 
-    //   /> 
-    // </View>
+    </SafeAreaView>    
   );
 }
 

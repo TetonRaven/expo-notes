@@ -16,6 +16,10 @@ interface NoteState {
   editingNoteIndex: number;
 }
 
+export function createNewNote(id: number): Note {
+  return { ...new Note(), id: id };
+}
+
 export const notesSlice = createSlice({
   name: 'notes',
   initialState: { 
@@ -42,7 +46,8 @@ export const notesSlice = createSlice({
       state.editingNoteIndex = -1;
     },    
     showNewNote: (state: NoteState) => {
-      state.newNote = { ...new Note(), id: state.notes.length + 1 };
+      state.newNote = createNewNote(state.notes.length + 1);
+      //state.newNote = { ...new Note(), id: state.notes.length + 1 };
       state.showNew = true;
     },
     editNote: (state: NoteState, action: PayloadAction<Note>) => {     
@@ -52,9 +57,13 @@ export const notesSlice = createSlice({
 
       console.log('index set to ' + state.editingNoteIndex);
     }
+  },
+  selectors: {
+    selectNotes: (state: NoteState) => state.notes,
   }
 });
 
 export const { addNote, updateNote, showNewNote, editNote } = notesSlice.actions;
+export const { selectNotes } = notesSlice.selectors;
 
 export default notesSlice.reducer;

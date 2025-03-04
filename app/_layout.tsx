@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import store from '../store/store'
 import { Provider } from 'react-redux'
+import { StyleSheet } from 'react-native';
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -33,11 +35,13 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>          
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
+        <SafeAreaProvider>
+          <Stack>          
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </SafeAreaProvider>
       </ThemeProvider>
     </Provider>      
   );
