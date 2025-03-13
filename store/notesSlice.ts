@@ -1,20 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Note } from '../models/note';
+import { NoteState } from './noteState';
 
 const initialNotes: Note[] = [
   { ...new Note(), id: 1, title: 'un' }, 
   { ...new Note(), id: 2, title: 'deux' }, 
   { ...new Note(), id: 3, title: 'trois' }
 ];
-
-interface NoteState {
-  notes: Note[];
-  newNote: Note | null;
-  showNew: boolean;
-  editingNote: Note | null;
-  editingNoteIndex: number;
-}
 
 export function createNewNote(id: number): Note {
   return { ...new Note(), id: id };
