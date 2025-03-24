@@ -1,27 +1,28 @@
 import { observable } from '@legendapp/state';
-import { configureSynced, synced } from "@legendapp/state/sync"
-import { ObservablePersistLocalStorage } from "@legendapp/state/persist-plugins/local-storage";
+import { Note } from '../models/note';
+import { Photo } from '../models/photo';
+
+// * Legend 3 persist
+import { configureSynced, synced, configureObservableSync } from "@legendapp/state/sync"
 import { syncObservable } from '@legendapp/state/sync';
 import { ObservablePersistMMKV } from "@legendapp/state/persist-plugins/mmkv";
-import AsyncStorage from 'react-native';
+import { observablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// import { configureObservablePersistence } from '@legendapp/state/persist'
-// import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
 
-// Global configuration
+// * Legend 2 persist
+// import { configureObservablePersistence, persistObservable } from '@legendapp/state/persist';
+// import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage';
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 // configureObservablePersistence({
-//     // Use AsyncStorage in React Native
 //     pluginLocal: ObservablePersistAsyncStorage,
 //     localOptions: {
 //         asyncStorage: {
-//             // The AsyncStorage plugin needs to be given the implementation of AsyncStorage
 //             AsyncStorage
 //         }
 //     }
-// })
+// });
 
-import { Note } from '../models/note';
-import { NoteState } from './noteState';
 
 interface Store {
     notes: Note[];
@@ -35,11 +36,12 @@ interface Store {
     editNote: (note: Note) => void;
 }
 
-// const mySynced = configureSynced(synced, {
-//     persist: {
-//         plugin: ObservablePersistLocalStorage
-//     }
-// });
+interface PhotoStore {
+    photos: Photo[];
+    addPhoto: (photo: Photo) => void;
+    deletePhoto: (photo: Photo) => void;
+    students: string[];
+}
 
 export const store$ = observable<Store>({
     notes: [
@@ -47,13 +49,6 @@ export const store$ = observable<Store>({
         { ...new Note(), id: 2, title: 'Dos' }, 
         { ...new Note(), id: 3, title: 'Trés' }
     ],
-    // notes: synced({
-    //     initial: [
-    //     ],
-    //     persist: {
-    //         name: 'notesStorage'
-    //     },
-    // }),
     newNote: null,
     showNew: false,
     editingNote: null,
@@ -82,9 +77,50 @@ export const store$ = observable<Store>({
     }
 });
 
-// syncObservable(store$, {
-//         persist: {
-//             name: 'notesStorage',
-//             plugin: ObservablePersistAsyncStorage
-//         }
-//     });
+export const photoStore$ = observable<PhotoStore>({
+    photos: [
+        { ...new Photo(), uri: 'https://images.ctfassets.net/m8onsx4mm13s/3q4f3fcX4cvluunwltGX9L/18a9702a54d7eda8df728786dd4b3207/__static.gibson.com_product-images_Custom_CUSU36573_Ebony_LPC68ULEBGH1_front.jpg?w=1200&h=1200', student: 'Jimmy' },
+        { ...new Photo(), uri: 'https://images.ctfassets.net/m8onsx4mm13s/dbnBPfqcASAr3cm52e26K/b1aab65498c0e41e63e198f6d8f19bdd/LPR59PSL21895_front.png', student: 'Jimmy' },
+        { ...new Photo(), uri: 'https://images.ctfassets.net/m8onsx4mm13s/55aySP0h78YNesRnd8ZESL/4b3d468f2a93da10ee93c3f477c51f77/DSVS007WCH3_front.png', student: 'Kirk' }
+    ],
+    addPhoto: (photo: Photo) => {
+        photoStore$.photos.push(photo);
+    },
+    deletePhoto: (photo: Photo) => {
+        const index = photoStore$.photos.get().findIndex(p => p.uri === photo.uri);
+        photoStore$.photos.get().splice(index, 1);
+    },
+    students: [
+        'Jimmy',
+        'Kirk',
+        'James',
+        'Jimi',
+        'Lizzy'
+    ]
+});
+
+// * Legend 3 persist
+const persistOptions = configureSynced({
+    persist: {
+        plugin: observablePersistAsyncStorage({
+            AsyncStorage
+        })
+    }
+});
+
+syncObservable(store$, persistOptions({
+    persist: {
+        name: 'notesStorage3'
+    }
+}));
+
+syncObservable(photoStore$, persistOptions({
+    persist: {
+        name: 'photoStorage31'
+    }
+}));
+
+// * Legend 2 persist
+// persistObservable(store$, {
+//     local: 's2-1',
+//   })

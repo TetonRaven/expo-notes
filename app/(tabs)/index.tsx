@@ -9,38 +9,51 @@ import { ThemedText } from '@/components/ThemedText';
 import { Note } from '@/models/note';
 import NoteEditor, { NoteProps } from '@/components/NoteEditor';
 
-import { observer, use$, useObservable } from "@legendapp/state/react"
-import { store$ } from '@/store/legendState'
-import { sync } from '@/store/persist';
+import { store$ } from '@/store/legendState';
 
-export default function HomeScreen() {  
+// * Legend 3
+import { observer, use$, useObservable } from "@legendapp/state/react"
+
+
+// * Legend 2
+//import { observer } from "@legendapp/state/react";
+
+
+//export default function HomeScreen() {  
+//const HomeScreen = observer(() => {
+function HomeScreen() {  
+  // * Redux
   // const notes: Note[] = useSelector((state: any) => state.notes.notes);
   // const showNew: boolean = useSelector((state: any) => state.notes.showNew);
   // const newNote: Note = useSelector((state: any) => state.notes.newNote);
   // const editingNote: Note = useSelector((state: any) => state.notes.editingNote);
   // const editingNoteIndex: number = useSelector((state: any) => state.notes.editingNoteIndex);
-
   // const dispatch = useDispatch();
 
-  // * Legeng
+  // * Legend 3
   const notes: Note[] = use$(store$.notes);
   const showNew: boolean = use$(store$.showNew);
   const newNote: Note | null = use$(store$.newNote);
   const editingNote: Note | null = use$(store$.editingNote);
   const editingNoteIndex: number = use$(store$.editingNoteIndex);
 
-  //sync();
+  // * Legend 2
+  // const notes: Note[] = store$.notes.get();
+  // const showNew: boolean = store$.showNew.get();
+  // const newNote: Note | null = store$.newNote.get();
+  // const editingNote: Note | null = store$.editingNote.get();
+  // const editingNoteIndex: number = store$.editingNoteIndex.get();
 
   function handlAddNotePress()  {
     //dispatch(showNewNote());
 
-    store$.showNewNote();
+    store$.showNewNote();    
   }
   
   function saveNewNote(note: Note) {
     //dispatch(addNote(note));
 
-    store$.addNote(note);
+    store$.addNote(note);    
   }
 
   function handleEditNote(note: Note) {
@@ -55,7 +68,9 @@ export default function HomeScreen() {
     store$.updateNote(note);
   }    
 
-  // todo: add photo, redux, local persistence, api
+  function doit() {
+    store$.notes.set((n) => [...n, { ...new Note(), id: notes.length + 1, title: 'Ta Dow!' }]);
+  }
 
   return (    
     <SafeAreaView style={styles.container}>
@@ -73,9 +88,12 @@ export default function HomeScreen() {
           : <Text onPress={() => handleEditNote(item)}>{item.title}</Text>} 
       />
 
+      <Button title="Doit" onPress={() => doit()} />
+
     </SafeAreaView>    
   );
-}
+//});
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -103,3 +121,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
+
+export default HomeScreen;
